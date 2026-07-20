@@ -300,7 +300,13 @@
       letterEls.push(span);
     }
     refreshTarget();
+
+    // Say the word, then spell it out once as a preview. After this the
+    // letters stay silent while she types — only the chime responds.
     speak(current.word, 0.85, 1.3);
+    for (var j = 0; j < current.word.length; j++) {
+      speak(current.word.charAt(j), 0.7, 1.4);
+    }
   }
 
   function refreshTarget() {
@@ -320,7 +326,6 @@
       span.classList.remove("next");
       span.classList.add("done", "pop");
       soundCorrect();
-      speak(ch, 0.8, 1.4);
       index++;
       if (index >= current.word.length) {
         highlightKey(null);
