@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<title>Typing Fun</title>
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <canvas id="confetti"></canvas>
+
+  <div id="flash" aria-hidden="true"></div>
+
+  <main id="game" class="hidden">
+    <div id="picture">🐱</div>
+    <div id="word"></div>
+    <div id="keyboard"></div>
+  </main>
+
+  <div id="start">
+    <button id="start-btn" type="button" aria-label="Start">
+      <span id="start-icon">🐣</span>
+    </button>
+  </div>
+
+<script src="words.js"></script>
+<script src="game.js"></script>
+</body>
+</html>

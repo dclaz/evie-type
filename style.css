@@ -1,0 +1,266 @@
+/* Evie's typing game — soft pastel, chunky, minimal text. */
+
+:root {
+  --bg-1: #fff6fb;
+  --bg-2: #eef6ff;
+  --ink-off: #d7d2e4;      /* greyed-out letter */
+  --ink-on: #6b4fa8;       /* filled letter */
+  --glow: #ffc9e3;         /* next-letter glow */
+  --key-face: #ffffff;
+  --key-edge: #e3dcf2;
+  --key-ink: #9a8fc0;
+  --key-hot-1: #ffd9ec;
+  --key-hot-2: #cfe9ff;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  background: linear-gradient(160deg, var(--bg-1) 0%, var(--bg-2) 100%);
+  font-family: "Baloo 2", "Comic Sans MS", "Chalkboard SE", "Trebuchet MS",
+               "Segoe UI Rounded", system-ui, -apple-system, sans-serif;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+.hidden { display: none !important; }
+
+/* ---------- layout ---------- */
+
+#game {
+  position: relative;
+  z-index: 2;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(8px, 2vh, 36px);
+  padding: 2vh 2vw 3vh;
+}
+
+/* auto margins float the picture + word as one group, keyboard pinned low */
+#picture { margin-top: auto; }
+#keyboard { margin-top: auto; }
+
+/* ---------- picture ---------- */
+
+#picture {
+  font-size: clamp(72px, 15vh, 170px);
+  line-height: 1.1;
+  filter: drop-shadow(0 8px 14px rgba(150, 130, 190, 0.25));
+  transform-origin: 50% 60%;
+}
+
+#picture.celebrate {
+  animation: pic-party 1.5s cubic-bezier(0.34, 1.56, 0.64, 1) 1;
+}
+
+@keyframes pic-party {
+  0%   { transform: scale(1) rotate(0deg); }
+  20%  { transform: scale(1.45) rotate(-9deg); }
+  38%  { transform: scale(1.35) rotate(9deg); }
+  56%  { transform: scale(1.42) rotate(-7deg); }
+  74%  { transform: scale(1.3) rotate(6deg); }
+  100% { transform: scale(1) rotate(0deg); }
+}
+
+/* ---------- word ---------- */
+
+#word {
+  display: flex;
+  gap: clamp(6px, 1.4vw, 20px);
+  font-size: clamp(120px, 13vw, 200px);
+  font-weight: 900;
+  letter-spacing: 0.01em;
+}
+
+#word.nudge { animation: nudge 0.36s ease-out 1; }
+
+@keyframes nudge {
+  0%, 100% { transform: translateX(0) rotate(0deg); }
+  25%      { transform: translateX(-9px) rotate(-1.5deg); }
+  60%      { transform: translateX(9px) rotate(1.5deg); }
+}
+
+.letter {
+  color: var(--ink-off);
+  text-transform: lowercase;
+  transition: color 0.18s ease-out;
+  transform-origin: 50% 70%;
+  will-change: transform;
+}
+
+.letter.done {
+  color: var(--ink-on);
+  text-shadow: 0 6px 0 rgba(255, 255, 255, 0.85),
+               0 10px 18px rgba(140, 110, 200, 0.28);
+}
+
+.letter.pop { animation: pop 0.42s cubic-bezier(0.34, 1.56, 0.64, 1) 1; }
+
+@keyframes pop {
+  0%   { transform: scale(1); }
+  40%  { transform: scale(1.55) translateY(-10px); }
+  100% { transform: scale(1); }
+}
+
+/* next needed letter: glowing + gently breathing */
+.letter.next {
+  color: #b79ae0;
+  animation: breathe 1.1s ease-in-out infinite;
+  text-shadow: 0 0 18px var(--glow), 0 0 42px var(--glow);
+}
+
+@keyframes breathe {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.14) translateY(-6px); }
+}
+
+/* whole-word celebration bounce */
+.letter.cheer {
+  color: var(--ink-on);
+  animation: cheer 0.75s cubic-bezier(0.34, 1.56, 0.64, 1) 1;
+}
+
+@keyframes cheer {
+  0%   { transform: translateY(0) scale(1); }
+  35%  { transform: translateY(-38px) scale(1.22); }
+  70%  { transform: translateY(0) scale(0.96); }
+  100% { transform: translateY(0) scale(1); }
+}
+
+/* ---------- keyboard ---------- */
+
+#keyboard {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(5px, 1vh, 12px);
+  width: 100%;
+  max-width: 1100px;
+  align-items: center;
+}
+
+.krow { display: flex; gap: clamp(5px, 0.9vw, 12px); }
+
+.key {
+  width: clamp(38px, 7.4vw, 88px);
+  height: clamp(42px, 8vh, 86px);
+  border: none;
+  border-radius: 22px;
+  background: var(--key-face);
+  color: var(--key-ink);
+  font: inherit;
+  font-weight: 800;
+  font-size: clamp(18px, 3.2vw, 40px);
+  text-transform: lowercase;
+  box-shadow: 0 5px 0 var(--key-edge), 0 8px 16px rgba(150, 130, 190, 0.16);
+  transition: transform 0.09s ease-out, box-shadow 0.09s ease-out;
+  cursor: pointer;
+  padding: 0;
+}
+
+.key:active,
+.key.press {
+  transform: translateY(4px);
+  box-shadow: 0 1px 0 var(--key-edge);
+}
+
+.key.hot {
+  background: linear-gradient(150deg, var(--key-hot-1), var(--key-hot-2));
+  color: #6b4fa8;
+  animation: key-pulse 1.1s ease-in-out infinite;
+}
+
+@keyframes key-pulse {
+  0%, 100% { box-shadow: 0 5px 0 #e6b9d6, 0 0 0 0 rgba(255, 170, 214, 0.55); }
+  50%      { box-shadow: 0 5px 0 #e6b9d6, 0 0 0 16px rgba(255, 170, 214, 0); }
+}
+
+/* ---------- background celebration sweep ---------- */
+
+#flash {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  opacity: 0;
+  pointer-events: none;
+  background: linear-gradient(100deg,
+    rgba(255, 214, 236, 0) 0%,
+    rgba(255, 214, 236, 0.95) 22%,
+    rgba(214, 240, 255, 0.95) 46%,
+    rgba(224, 255, 232, 0.95) 68%,
+    rgba(255, 246, 208, 0) 100%);
+  background-size: 260% 100%;
+  background-position: 130% 0;
+}
+
+#flash.sweep { animation: sweep 1.4s ease-in-out 1; }
+
+@keyframes sweep {
+  0%   { opacity: 0;    background-position: 130% 0; }
+  22%  { opacity: 0.85; }
+  78%  { opacity: 0.85; }
+  100% { opacity: 0;    background-position: -60% 0; }
+}
+
+/* ---------- confetti ---------- */
+
+#confetti {
+  position: fixed;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+}
+
+/* ---------- start screen ---------- */
+
+#start {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(160deg, #fff2f8 0%, #eaf4ff 100%);
+}
+
+#start-btn {
+  width: clamp(220px, 42vmin, 420px);
+  height: clamp(220px, 42vmin, 420px);
+  border: none;
+  border-radius: 50%;
+  background: linear-gradient(150deg, #ffd9ec, #cfe9ff 60%, #d9ffe8);
+  box-shadow: 0 16px 0 #e9c9de, 0 26px 50px rgba(150, 130, 190, 0.3);
+  cursor: pointer;
+  animation: bob 1.8s ease-in-out infinite;
+  padding: 0;
+}
+
+#start-btn:active {
+  transform: translateY(10px);
+  box-shadow: 0 6px 0 #e9c9de, 0 12px 24px rgba(150, 130, 190, 0.3);
+  animation: none;
+}
+
+#start-icon {
+  display: block;
+  font-size: clamp(96px, 20vmin, 200px);
+  line-height: 1;
+}
+
+@keyframes bob {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50%      { transform: translateY(-16px) scale(1.04); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001s !important;
+    animation-iteration-count: 1 !important;
+  }
+}
