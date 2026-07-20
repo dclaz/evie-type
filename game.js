@@ -22,6 +22,9 @@
   var elWord = document.getElementById("word");
   var elKeyboard = document.getElementById("keyboard");
   var elFlash = document.getElementById("flash");
+  var elStatKeys = document.getElementById("stat-keys");
+  var elStatWords = document.getElementById("stat-words");
+  var elFonts = document.getElementById("fonts");
   var canvas = document.getElementById("confetti");
   var ctx = canvas.getContext("2d");
 
@@ -33,6 +36,10 @@
   var started = false;
   var bag = [];           // shuffled queue so words don't repeat too soon
   var timers = [];
+
+  var correctKeys = 0;
+  var totalKeys = 0;
+  var wordsDone = 0;
 
   /* ---------------- audio ---------------- */
 
@@ -251,6 +258,39 @@
     later(function () { btn.classList.remove("press"); }, 130);
   }
 
+  /* ---------------- stats + font switcher ---------------- */
+
+  function updateStats() {
+    var pct = totalKeys ? Math.round((correctKeys / totalKeys) * 100) : 0;
+    elStatKeys.textContent = correctKeys + "/" + totalKeys +
+                             " correct keys (" + pct + "%)";
+    elStatWords.textContent = "Number of words: " + wordsDone;
+  }
+
+  function setFont(name) {
+    document.body.setAttribute("data-font", name);
+    var btns = elFonts.querySelectorAll(".font-btn");
+    for (var i = 0; i < btns.length; i++) {
+      btns[i].classList.toggle("is-on",
+                               btns[i].getAttribute("data-font") === name);
+    }
+    // localStorage is unavailable on some file:// origins — never fatal.
+    try { window.localStorage.setItem("evie-font", name); } catch (e) { /* ignore */ }
+  }
+
+  function restoreFont() {
+    var saved = null;
+    try { saved = window.localStorage.getItem("evie-font"); } catch (e) { /* ignore */ }
+    setFont(saved === "andika" || saved === "literata" ? saved : "poppins");
+  }
+
+  elFonts.addEventListener("click", function (e) {
+    var btn = e.target.closest ? e.target.closest(".font-btn") : null;
+    if (!btn) { return; }
+    setFont(btn.getAttribute("data-font"));
+    btn.blur();                 // keep space/enter from re-triggering the chip
+  });
+
   /* ---------------- word flow ---------------- */
 
   function later(fn, ms) {
@@ -317,8 +357,11 @@
     if (!started || celebrating || !current) { return; }
     resumeAudio();
     flashKey(ch);
+    totalKeys++;
 
     if (ch === current.word.charAt(index)) {
+      correctKeys++;
+      updateStats();
       var span = letterEls[index];
       span.classList.remove("next");
       span.classList.add("done", "pop");
@@ -336,11 +379,14 @@
       void elWord.offsetWidth;               // restart the animation
       elWord.classList.add("nudge");
       soundBounce();
+      updateStats();
     }
   }
 
   function celebrate() {
     celebrating = true;
+    wordsDone++;
+    updateStats();
 
     burstConfetti();
     elPicture.classList.add("celebrate");
@@ -409,6 +455,8 @@
 
   sizeCanvas();
   buildKeyboard();
+  restoreFont();
+  updateStats();
 
   // Exposed only so the page can be driven by an automated smoke test.
   window.__game = {
@@ -425,7 +473,11 @@
           }
           return null;
         }()),
-        particles: particles.length
+        particles: particles.length,
+        correctKeys: correctKeys,
+        totalKeys: totalKeys,
+        wordsDone: wordsDone,
+        font: document.body.getAttribute("data-font")
       };
     }
   };
