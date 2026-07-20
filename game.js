@@ -4,7 +4,7 @@
 (function () {
   "use strict";
 
-  var KEY_ROWS = ["qwertyuiop", "asdfghjkl", "zxcvbnm"];
+  var KEY_ROWS = ["1234567890", "qwertyuiop", "asdfghjkl", "zxcvbnm"];
   var PRAISE = [
     "Yay!",
     "You did it!",
@@ -23,6 +23,7 @@
   var elKeyboard = document.getElementById("keyboard");
   var elFlash = document.getElementById("flash");
   var elStatKeys = document.getElementById("stat-keys");
+  var elStatCkpm = document.getElementById("stat-ckpm");
   var elStatWords = document.getElementById("stat-words");
   var elFonts = document.getElementById("fonts");
   var canvas = document.getElementById("confetti");
@@ -40,6 +41,7 @@
   var correctKeys = 0;
   var totalKeys = 0;
   var wordsDone = 0;
+  var sessionStart = null;
 
   /* ---------------- audio ---------------- */
 
@@ -264,6 +266,11 @@
     var pct = totalKeys ? Math.round((correctKeys / totalKeys) * 100) : 0;
     elStatKeys.textContent = correctKeys + "/" + totalKeys +
                              " correct keys (" + pct + "%)";
+    var elapsedMs = sessionStart ? Date.now() - sessionStart : 0;
+    var ckpm = (correctKeys > 0 && elapsedMs > 3000)
+      ? Math.round(correctKeys / (elapsedMs / 60000))
+      : 0;
+    elStatCkpm.textContent = ckpm + " correct keys/min";
     elStatWords.textContent = "Number of words: " + wordsDone;
   }
 
@@ -281,7 +288,7 @@
   function restoreFont() {
     var saved = null;
     try { saved = window.localStorage.getItem("evie-font"); } catch (e) { /* ignore */ }
-    setFont(saved === "andika" || saved === "literata" ? saved : "poppins");
+    setFont(saved === "edu" || saved === "literata" ? saved : "poppins");
   }
 
   elFonts.addEventListener("click", function (e) {
@@ -421,6 +428,7 @@
   function start() {
     if (started) { return; }
     started = true;
+    sessionStart = Date.now();
     initAudio();
     resumeAudio();
     stopSpeech();
@@ -439,7 +447,7 @@
     var k = e.key;
     if (typeof k === "string" && k.length === 1) {
       var ch = k.toLowerCase();
-      if (ch >= "a" && ch <= "z") {
+      if ((ch >= "a" && ch <= "z") || (ch >= "0" && ch <= "9")) {
         e.preventDefault();
         handleLetter(ch);
       }
@@ -476,6 +484,12 @@
         particles: particles.length,
         correctKeys: correctKeys,
         totalKeys: totalKeys,
+        correctKeysPerMinute: (function () {
+          var elapsedMs = sessionStart ? Date.now() - sessionStart : 0;
+          return (correctKeys > 0 && elapsedMs > 3000)
+            ? Math.round(correctKeys / (elapsedMs / 60000))
+            : 0;
+        }()),
         wordsDone: wordsDone,
         font: document.body.getAttribute("data-font")
       };
