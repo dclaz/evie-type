@@ -19,3 +19,5 @@ Then visit `http://localhost:8000`.
 - `game.js` — game logic
 - `words.js` — word/emoji list
 - `OFL.txt` — license for the embedded fonts
+
+# lol
