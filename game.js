@@ -301,12 +301,9 @@
     }
     refreshTarget();
 
-    // Say the word, then spell it out once as a preview. After this the
-    // letters stay silent while she types — only the chime responds.
+    // Just the word — letter names are never spoken; typing answers with
+    // the chime alone.
     speak(current.word, 0.85, 1.3);
-    for (var j = 0; j < current.word.length; j++) {
-      speak(current.word.charAt(j), 0.7, 1.4);
-    }
   }
 
   function refreshTarget() {
