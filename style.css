@@ -1,5 +1,6 @@
-/* Poppins (Google Fonts, SIL Open Font License 1.1) — subset to a-z and
-   embedded as data URIs so the game needs no network and no font install.
+/* Poppins (Google Fonts, SIL Open Font License 1.1 — see OFL.txt) — subset
+   to a-z and embedded as data URIs so the game needs no network and no
+   font install.
    Chosen for its single-storey "a" and "g", which match the Australian
    foundation handwriting styles children are taught to write. */
 @font-face {
@@ -17,8 +18,8 @@
   src: url(data:font/woff2;base64,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) format('woff2');
 }
 
-/* Andika (SIL OFL) — literacy face, single-storey a and g.
-   Literata (SIL OFL) — serif comparison; note serifs bring a
+/* Andika (SIL OFL, see OFL.txt) — literacy face, single-storey a and g.
+   Literata (SIL OFL, see OFL.txt) — serif comparison; note serifs bring a
    double-storey "a", unlike the Australian foundation script.
    Both subset to a-z and embedded, same as Poppins above. */
 @font-face {
