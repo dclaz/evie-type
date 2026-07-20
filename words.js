@@ -42,5 +42,10 @@ var WORDS = [
   { word: "turtle", emoji: "🐢" },
   { word: "rocket", emoji: "🚀" },
   { word: "cheese", emoji: "🧀" },
-  { word: "monkey", emoji: "🐵" }
+  { word: "monkey", emoji: "🐵" },
+  { word: "jet",    emoji: "✈️" },
+  { word: "van",    emoji: "🚐" },
+  { word: "fox",    emoji: "🦊" },
+  { word: "queen",  emoji: "👑" },
+  { word: "zebra",  emoji: "🦓" }
 ];

@@ -339,9 +339,19 @@ html, body {
   inset: 0;
   z-index: 10;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: clamp(16px, 3vmin, 28px);
   background: linear-gradient(160deg, #fff2f8 0%, #eaf4ff 100%);
+}
+
+#start-label {
+  margin: 0;
+  font-family: var(--font);
+  font-size: clamp(18px, 3.4vmin, 28px);
+  font-weight: 600;
+  color: var(--hud-ink);
 }
 
 #start-btn {
